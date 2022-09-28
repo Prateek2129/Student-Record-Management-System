@@ -1,0 +1,429 @@
+#include <iostream>
+#include<iomanip>
+#include<string>
+#include<fstream>
+using namespace std;
+
+int Total_Fees=50000;
+int Total_days=100;
+ 
+class Node {
+public:
+    int roll;
+    string Name;
+    string Dept;
+    int Marks;
+    int fees;
+    int attendance;
+    Node* next;
+};
+
+Node* head = new Node();
+ 
+bool check(int x)
+{
+    if (head == NULL)
+        return false;
+ 
+    Node* t = new Node;
+    t = head;
+   
+    while (t != NULL) {
+        if (t->roll == x)
+            return true;
+        t = t->next;
+    }
+ 
+    return false;
+}
+ 
+void Insert_Record(int roll, string Name,string Dept, int Marks,int fees,int attendance)                  
+{
+    if (check(roll)) {
+        cout << "Student with this "
+             << "record Already Exists\n";
+        return;
+    }
+ 
+    Node* t = new Node();
+    t->roll = roll;
+    t->Name = Name;
+    t->Dept = Dept;
+    t->Marks = Marks;
+    t->fees=fees;
+    t->attendance=attendance;
+    t->next = NULL;
+ 
+    if (head == NULL || (head->roll >= t->roll)) {
+        t->next = head;
+        head = t;
+    }
+ 
+    else {
+        Node* c = head;
+        while (c->next != NULL && c->next->roll < t->roll) {
+            c = c->next;
+        }
+        t->next = c->next;
+        c->next = t;
+    }
+ 
+    cout << "Record Inserted "
+         << "Successfully\n";
+}
+ 
+void Search_Record(int roll)
+{
+    if (!head) {
+        cout << "No such Record "
+             << "Available\n";
+        return;
+    }
+ 
+    else {
+        Node* p = head;
+        while (p) {
+            if (p->roll == roll) 
+            {
+                
+                cout<<"\n";
+                cout<<std::setw(20) 
+                    <<std::left<< "Roll Number"
+                    <<std::right<< p->roll << endl;
+                cout<<std::setw(20)
+                    <<std::left<< "Name"
+                    <<std::right<< p->Name << endl;
+                cout<<std::setw(20)
+                    <<std::left<< "Department"
+                    <<std::right<< p->Dept << endl;
+                cout<<std::setw(20)
+                    <<std::left<< "Marks"
+                    <<std::right<< p->Marks << endl;
+                cout<<std::setw(20)
+                    <<std::left<< "Submitted fees"
+                    <<std::right<< p->fees << endl;
+                cout<<std::setw(20)
+                    <<std::left<< "Appearances"
+                    <<std::right<< p->attendance << endl;
+         
+                return;
+            }
+            p = p->next;
+        }
+ 
+        if (p == NULL)
+            cout << "No such Record "
+                 << "Available\n";
+    }
+}
+
+void Delete_Record(int roll)
+{
+    Node* t = head;
+    Node* p = NULL;
+ 
+    if (t != NULL
+        && t->roll == roll) {
+        head = t->next;
+        delete t;
+ 
+        cout << "Record Deleted "
+             << "Successfully\n";
+        return;
+    }
+
+    while (t != NULL && t->roll != roll) {
+        p = t;
+        t = t->next;
+    }
+    if (t == NULL) {
+        cout << "Record does not Exist\n";
+        return ;
+    }
+    else
+    {
+        p->next = t->next;
+        delete t;
+        cout << "Record Deleted "
+             << "Successfully\n";
+ 
+        return ;
+    }
+}
+
+void Update_Record(int rollno)
+{
+    Node* p = head;
+    if (!check(rollno)) {
+        cout << "Student with this "
+             << "record not Exists\n";
+        return;
+    }
+    else
+    {
+        int Roll,Marks,fees,attendance;
+        string Name,Dept;
+        
+        cout << "Enter updated Roll Number of Student\n";
+        cin>> Roll;
+        cout << "Enter updated name of Student\n";
+        getline(cin>>ws,Name);
+        cout << "Enter updated course of Student\n";
+        cin>> Dept;
+        cout << "Enter updated marks of Student\n";
+        cin>> Marks;
+        cout << "Enter updated fees of Student\n";
+        cin>> fees;
+        cout << "Enter updated attendance of Student\n";
+        cin>> attendance;
+        while(p!=NULL)
+        {
+           if(p->roll==rollno)
+           {
+               p->roll = Roll;
+               p->Name = Name;
+               p->Dept = Dept;
+               p->Marks = Marks;
+               p->fees=fees;
+               p->attendance=attendance;
+               return;
+           }
+           p=p->next;
+        }
+        
+       cout<<"Record not present!"<<endl;
+        
+    }
+}
+
+void Show_SingleRecord(int rollno)
+{
+    Node* p = head;
+    int flag=0;
+    if (p == NULL) 
+    {
+        cout << "No Record "
+             << "Available\n";
+    }
+    else 
+    {
+        cout<<std::setw(10)<<std::left <<"Index"
+            <<std::setw(20)<<std::left<<"Name" 
+            <<std::setw(10)<<std::right<<"Course"
+            <<std::setw(10)<<std::right <<"Marks"
+            <<std::setw(10)<<std::right<<"Fees"
+            <<std::setw(20)<<std::right<<"Attendance"<<endl;
+        
+        while (p != NULL ) 
+       {
+            if(p->roll==rollno)
+           {
+                cout<<std::setw(10)<<std::left << p->roll
+                <<std::setw(20)<<std::left<< p->Name 
+                <<std::setw(10)<<std::right<< p->Dept
+                <<std::setw(10)<<std::right << p->Marks 
+                <<std::setw(10)<<std::right<<p->fees
+                <<std::setw(20)<<std::right<<p->attendance<<endl;
+                flag=1;
+           }
+            p = p->next;
+        }
+        if(flag==0)
+            cout<<"Record not present!"<<endl;
+    }
+}
+ 
+
+void Fees_Status()
+{
+    
+    Node* p = head;
+    if (p == NULL) 
+    {
+        cout << "No Record "
+             << "Available\n";
+    }
+    while (p != NULL ) 
+    {
+        if(p->fees < Total_Fees)
+        {
+            int Due_Fees=Total_Fees - p->fees;
+            cout<<"Amount of fees yet to be submitted : "<<Due_Fees<<" by student having rollno "<<p->roll<<endl;
+        }        
+        p = p->next;
+    }
+}
+
+void Short_Attendance()
+{
+    Node* p = head;
+    if (p == NULL) 
+    {
+        cout << "No Record "
+             << "Available\n";
+    }
+    while (p != NULL ) 
+   {
+        int min=Total_days/2;
+            
+        if(p->attendance < min)
+        {
+            cout<<p->roll<<"\t";
+        }
+            p = p->next;
+    }
+    cout<<"\n";
+}
+
+void Exit()
+{
+    exit(0);
+}
+ 
+void Show_Record()
+{
+    std::string filename ;
+    cout<<"\nEnter filename where you want to save the records: ";
+    getline(cin>>ws,filename);
+    // cout<<filename;
+    std::ofstream out_file {filename,std::ios::trunc};
+    Node* p = head;
+    if (p == NULL) {
+        cout << "No Record "
+             << "Available\n";
+    }
+    else 
+    {
+        cout<<std::setw(10)<<std::left <<"Index"
+            <<std::setw(20)<<std::left<<"Name" 
+            <<std::setw(10)<<std::right<<"Course"
+            <<std::setw(10)<<std::right <<"Marks"
+            <<std::setw(10)<<std::right<<"Fees"
+            <<std::setw(20)<<std::right<<"Attendance"<<endl;
+ 
+        if(out_file)
+        {
+            out_file<<std::setw(10)<<std::left <<"Index"
+                    <<std::setw(20)<<std::left<<"Name" 
+                    <<std::setw(10)<<std::right<<"Course"
+                    <<std::setw(10)<<std::right <<"Marks"
+                    <<std::setw(10)<<std::right<<"Fees"
+                    <<std::setw(20)<<std::right<<"Attendance"<<endl;
+        }
+        out_file.close();
+
+        std::ofstream out_file {filename,std::ios::app};
+        while (p != NULL) 
+        {
+            cout<<std::setw(10)<<std::left << p->roll
+                <<std::setw(20)<<std::left<< p->Name 
+                <<std::setw(10)<<std::right<< p->Dept
+                <<std::setw(10)<<std::right << p->Marks
+                <<std::setw(10)<<std::right<<p->fees
+                <<std::setw(20)<<std::right<<p->attendance<<endl;
+             
+            if(out_file)
+            {
+                // std::ofstream out_file {"output1_file.txt",std::ios::app};
+                out_file<<std::setw(10)<<std::left << p->roll
+                        <<std::setw(20)<<std::left<< p->Name 
+                        <<std::setw(10)<<std::right<< p->Dept
+                        <<std::setw(10)<<std::right << p->Marks
+                        <<std::setw(10)<<std::right<<p->fees
+                        <<std::setw(20)<<std::right<<p->attendance<<endl;   
+            } 
+
+            p = p->next;
+        }
+        out_file.close();
+    }
+}
+int main()
+{
+    head = NULL;
+    string Name;
+    string Dept;
+    int Roll, Marks,attendance,fees;
+ 
+    while (true) 
+    {
+        cout << "\n\t\tWelcome to Student Record "
+                "Management System\n\n\tPress\n\t1 to "
+                "create a new Record\n\t2 to delete a "
+                "student record\n\t3 to Search a Student "
+                "Record\n\t4 to view all students record\n\t5 "
+                "To update a student record\n\t6 "
+                "To show a particular record\n\t7 "
+                "To check the fees status of student\n\t8 "
+                "To check attendance of student"
+                "\n\t9 to Exit\n";
+                
+        cout << "\nEnter your Choice\n";
+        int Choice;
+ 
+        cin >> Choice;
+        if (Choice == 1) {
+            cout << "Enter Name of Student\n";
+            getline(cin>>ws,Name);
+            cout << "Enter Roll Number of Student\n";
+            cin >> Roll;
+            cout << "Enter Department of Student \n";
+            cin >> Dept;
+            cout << "Enter Total Marks of Student\n";
+            cin >> Marks;
+            cout<<"Enter Amount of fees submitted by Student\n";
+            cin>>fees;
+            cout<<"Number of presence in class\n";
+            cin>>attendance;
+            Insert_Record(Roll, Name, Dept, Marks,fees,attendance);
+        }
+        else if (Choice == 2) {
+            cout << "Enter Roll Number of Student whose "
+                    "record is to be deleted\n";
+            cin >> Roll;
+            Delete_Record(Roll);
+        }
+        else if (Choice == 3) {
+            cout << "Enter Roll Number of Student whose "
+                    "record you want to Search\n";
+            cin >> Roll;
+            Search_Record(Roll);
+        }
+        else if (Choice == 4) {
+            Show_Record();
+        }
+        else if(Choice==5)
+        {
+            cout<<"Enter roll number of Student whose record you want to change :";
+            cin>>Roll;
+            
+            Update_Record(Roll);
+        }
+        else if(Choice==6)
+        {
+            cout << "Enter Roll Number of Student whose "
+                    "record you want to See\n";
+            cin>> Roll;
+            Show_SingleRecord(Roll);
+        }
+        else if(Choice==7)
+        {
+            cout<<"Students whose fees is yet to be submitted\n";
+            Fees_Status();
+        }
+        else if(Choice==8)
+        {
+            cout<<"Students having short attendance : ";
+            Short_Attendance();
+        }
+        else if (Choice == 9) {
+            Exit();
+        }
+        else 
+        {
+            cout << "Invalid Choice "
+                 << "Try Again\n";
+        }
+    }
+    return 0;
+}
